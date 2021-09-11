@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz-2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <script>
+        function show_dialog() {
+            var showdialog = document.getElementById("myDialog");
+            showdialog.showModal();
+        }
+        function close_dialog() {
+            var closedialog = document.getElementById("myDialog");
+            closedialog.close();
+        }
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoKoNVKdXRrp8YDgara5W1m2nfTU1dG5g&callback=initMap"
+        type="text/javascript"></script>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
+            latlon = new google.maps.LatLng(lat, lon)
+            mapholder = document.getElementById('mapholder')
+            mapholder.style.height = '350px';
+            mapholder.style.width = '500px';
+
+            var myOptions = {
+                center: latlon,
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL }
+            }
+
+            var map = new google.maps.Map(document.getElementById("mapholder"), myOptions);
+            var marker = new google.maps.Marker({ position: latlon, map: map, title: "You are here!" });
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.")
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.")
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.")
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.")
+                    break;
+            }
+        }
+    </script>
+
+    <script>
+        function chkUsername() {
+            if (typeof (Storage) !== "undefined") {
+                if (localStorage.username) {
+                    document.getElementById("div1").innerHTML = localStorage.username;
+                } else {
+                    document.getElementById("div1").innerHTML = "<input type='text' id='username'>";
+                }
+            } else {
+                document.getElementById("result").innerHTML = "Sorry, your browser does not support web storage...";
+            }
+        }
+        function saveUsername() {
+            uname = document.getElementById("username");
+            localStorage.username = uname.value;
+            chkUsername();
+        }
+        function delUsername() {
+            localStorage.removeItem("username");
+            chkUsername();
+        }
+    </script>
+
+</head>
+
+<body onload="chkUsername()">
+    <div align=center>
+        <label for="name">กรุณาใส่ชื่อ:</label>
+        <div id="div1"></div>
+        <button type="button" class="btn btn-outline-primary" onclick="show_dialog(),saveUsername()">ยืนยัน</button>
+        <button type="button" class="btn btn-outline-primary" onclick="delUsername()">ล้างข้อมูล</button>
+
+        <dialog id="myDialog">
+            <button type="button" class="btn btn-outline-primary" onclick="getLocation()">แสดงแผนที่</button>
+            <div id="mapholder"></div>
+            <button type="button" class="btn btn-danger" onclick="close_dialog()">ปิด</button>
+        </dialog>
+    </div>
+</body>
+
+</html>
